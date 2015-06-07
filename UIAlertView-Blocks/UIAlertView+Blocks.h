@@ -11,9 +11,9 @@
 @class TCAlertAction;
 @interface UIAlertView (Blocks)
 
-- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherActions:(TCAlertAction *)otherAction arguments:(va_list)argList;
+- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherAction:(TCAlertAction *)otherAction, ... NS_REQUIRES_NIL_TERMINATION;
 
-- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherActions:(TCAlertAction *)otherAction, ... NS_REQUIRES_NIL_TERMINATION;
+- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherActions:(NSArray *)otherActions;
 
 - (NSInteger)addAction:(TCAlertAction *)action;
 

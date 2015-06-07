@@ -28,7 +28,7 @@ static char const kRI_DISMISSAL_ACTION_KEY;
 }
 
 
-- (instancetype)initWithTitle:(NSString *)title cancelAction:(TCAlertAction *)cancelAction destructiveAction:(TCAlertAction *)destructiveAction otherActions:(TCAlertAction *)otherAction arguments:(va_list)argList
+- (instancetype)initWithTitle:(NSString *)title cancelAction:(TCAlertAction *)cancelAction destructiveAction:(TCAlertAction *)destructiveAction otherActions:(NSArray *)otherActions
 {
     if ((self = [self initWithTitle:title delegate:self cancelButtonTitle:nil destructiveButtonTitle:destructiveAction.title otherButtonTitles:nil])){
         NSMutableArray *buttonsArray = [NSMutableArray array];
@@ -36,13 +36,9 @@ static char const kRI_DISMISSAL_ACTION_KEY;
             [buttonsArray addObject:destructiveAction];
         }
         
-        if (nil != otherAction) {
-            TCAlertAction *eachItem = otherAction;
-            do {
-                [buttonsArray addObject:eachItem];
-                [self addButtonWithTitle:eachItem.title];
-                eachItem = va_arg(argList, TCAlertAction *);
-            } while (nil != eachItem);
+        for (TCAlertAction *eachItem in otherActions) {
+            [buttonsArray addObject:eachItem];
+            [self addButtonWithTitle:eachItem.title];
         }
         
         if (nil != cancelAction) {
@@ -56,13 +52,22 @@ static char const kRI_DISMISSAL_ACTION_KEY;
     return self;
 }
 
-- (instancetype)initWithTitle:(NSString *)title cancelAction:(TCAlertAction *)cancelAction destructiveAction:(TCAlertAction *)destructiveAction otherActions:(TCAlertAction *)otherAction, ...
+- (instancetype)initWithTitle:(NSString *)title cancelAction:(TCAlertAction *)cancelAction destructiveAction:(TCAlertAction *)destructiveAction otherAction:(TCAlertAction *)otherAction, ...
 {
-    va_list argList;
-    va_start(argList, otherAction);
-    self = [self initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherAction arguments:argList];
-    va_end(argList);
-    return self;
+    NSMutableArray *arry = nil;
+    if (nil != otherAction) {
+        arry = [NSMutableArray array];
+        TCAlertAction *eachItem = otherAction;
+        va_list argList;
+        va_start(argList, otherAction);
+        do {
+            [arry addObject:eachItem];
+            eachItem = va_arg(argList, TCAlertAction *);
+        } while (nil != eachItem);
+        va_end(argList);
+    }
+   
+    return [self initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:arry];
 }
 
 

@@ -14,7 +14,7 @@ static char const kRI_BUTTON_ASS_KEY;
 
 @implementation UIAlertView (Blocks)
 
-- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherActions:(TCAlertAction *)otherAction arguments:(va_list)argList
+- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherActions:(NSArray *)otherActions
 {
     if ((self = [self initWithTitle:title message:message delegate:self cancelButtonTitle:cancelAction.title otherButtonTitles:nil])) {
         NSMutableArray *buttonsArray = [self buttonItems];
@@ -22,27 +22,32 @@ static char const kRI_BUTTON_ASS_KEY;
             [buttonsArray addObject:cancelAction];
         }
         
-        if (nil != otherAction) {
-            TCAlertAction *eachItem = otherAction;
-            do {
-                [buttonsArray addObject:eachItem];
-                [self addButtonWithTitle:eachItem.title];
-                eachItem = va_arg(argList, TCAlertAction *);
-            } while (nil != eachItem);
+        for (TCAlertAction *eachItem in otherActions) {
+            [buttonsArray addObject:eachItem];
+            [self addButtonWithTitle:eachItem.title];
         }
         
-        [self setDelegate:self];
+        self.delegate = self;
     }
     return self;
 }
 
-- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherActions:(TCAlertAction *)otherAction, ...
+- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherAction:(TCAlertAction *)otherAction, ...
 {
-    va_list argList;
-    va_start(argList, otherAction);
-    self = [self initWithTitle:title message:message cancelAction:cancelAction otherActions:otherAction arguments:argList];
-    va_end(argList);
-    return self;
+    NSMutableArray *arry = nil;
+    if (nil != otherAction) {
+        arry = [NSMutableArray array];
+        TCAlertAction *eachItem = otherAction;
+        va_list argList;
+        va_start(argList, otherAction);
+        do {
+            [arry addObject:eachItem];
+            eachItem = va_arg(argList, TCAlertAction *);
+        } while (nil != eachItem);
+        va_end(argList);
+    }
+   
+    return [self initWithTitle:title message:message cancelAction:cancelAction otherActions:arry];
 }
 
 - (NSInteger)addAction:(TCAlertAction *)action

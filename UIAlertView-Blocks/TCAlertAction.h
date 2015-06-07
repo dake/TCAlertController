@@ -6,8 +6,7 @@
 //  Copyright (c) 2015年 Dake. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, TCAlertActionStyle) {
 #ifdef __IPHONE_8_0

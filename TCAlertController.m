@@ -58,49 +58,36 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
     TCAlertControllerStyle _preferredStyle;
 }
 
+
+
 - (instancetype)initAlertViewWithTitle:(NSString *)title
                                message:(NSString *)message
                          presentCtrler:(UIViewController *)viewCtrler
                           cancelAction:(TCAlertAction *)cancelAction
-                           otherAction:(TCAlertAction *)otherAction, ...
+                          otherActions:(NSArray *)otherActions
 {
-    NSParameterAssert(viewCtrler);
-    
     self = [super init];
     if (self) {
         _preferredStyle = kTCAlertControllerStyleAlert;
         
 #ifndef __IPHONE_8_0
-        va_list argList;
-        va_start(argList, otherAction);
-        _alertView = [[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherAction arguments:argList];
-        va_end(argList);
+            _alertView = [[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherActions];
 #else
         if (Nil == [UIAlertController class]) {
-            va_list argList;
-            va_start(argList, otherAction);
-            _alertView = [[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherAction arguments:argList];
-            va_end(argList);
+            _alertView = [[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherActions];
         }
         else {
-   
+            
             UIAlertController *alertCtrler = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-           
+            
             if (nil != cancelAction) {
                 [alertCtrler addAction:cancelAction.toUIAlertAction];
             }
             
-            if (nil != otherAction) {
-                TCAlertAction *eachItem = otherAction;
-                va_list argumentList;
-                va_start(argumentList, otherAction);
-                do {
-                    [alertCtrler addAction:eachItem.toUIAlertAction];
-                    eachItem = va_arg(argumentList, TCAlertAction *);
-                } while (nil != eachItem);
-                va_end(argumentList);
+            for (TCAlertAction *eachItem in otherActions) {
+                [alertCtrler addAction:eachItem.toUIAlertAction];
             }
-            
+
             _alertView = alertCtrler;
             _parentCtrler = viewCtrler ?: [UIApplication sharedApplication].keyWindow.rootViewController;
         }
@@ -110,14 +97,35 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
     return self;
 }
 
+- (instancetype)initAlertViewWithTitle:(NSString *)title
+                               message:(NSString *)message
+                         presentCtrler:(UIViewController *)viewCtrler
+                          cancelAction:(TCAlertAction *)cancelAction
+                           otherAction:(TCAlertAction *)otherAction, ...
+{
+    NSMutableArray *arry = nil;
+    if (nil != otherAction) {
+        arry = [NSMutableArray array];
+        TCAlertAction *eachItem = otherAction;
+        va_list argumentList;
+        va_start(argumentList, otherAction);
+        do {
+            [arry addObject:eachItem];
+            eachItem = va_arg(argumentList, TCAlertAction *);
+        } while (nil != eachItem);
+        va_end(argumentList);
+    }
+    
+    return [self initAlertViewWithTitle:title message:message presentCtrler:viewCtrler cancelAction:cancelAction otherActions:arry];
+}
+
+
 - (instancetype)initActionSheetWithTitle:(NSString *)title
                            presentCtrler:(UIViewController *)viewCtrler
                             cancelAction:(TCAlertAction *)cancelAction
                        destructiveAction:(TCAlertAction *)destructiveAction
-                             otherAction:(TCAlertAction *)otherAction, ...
+                            otherActions:(NSArray *)otherActions
 {
-    NSParameterAssert(viewCtrler);
-    
     self = [super init];
     if (self) {
         
@@ -125,16 +133,10 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
         _parentCtrler = viewCtrler ?: [UIApplication sharedApplication].keyWindow.rootViewController;
         
 #ifndef __IPHONE_8_0
-        va_list argList;
-        va_start(argList, otherAction);
-        _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherAction arguments:argList];
-        va_end(argList);
+            _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherActions];
 #else
         if (Nil == [UIAlertController class]) {
-            va_list argList;
-            va_start(argList, otherAction);
-            _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherAction arguments:argList];
-            va_end(argList);
+            _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherActions];
         }
         else {
             
@@ -148,15 +150,8 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
                 [alertCtrler addAction:destructiveAction.toUIAlertAction];
             }
             
-            if (nil != otherAction) {
-                TCAlertAction *eachItem = otherAction;
-                va_list argumentList;
-                va_start(argumentList, otherAction);
-                do {
-                    [alertCtrler addAction:eachItem.toUIAlertAction];
-                    eachItem = va_arg(argumentList, TCAlertAction *);
-                } while (nil != eachItem);
-                va_end(argumentList);
+            for (TCAlertAction *eachItem in otherActions) {
+                [alertCtrler addAction:eachItem.toUIAlertAction];
             }
             
             _alertView = alertCtrler;
@@ -166,6 +161,29 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
     
     return self;
 }
+
+
+- (instancetype)initActionSheetWithTitle:(NSString *)title
+                           presentCtrler:(UIViewController *)viewCtrler
+                            cancelAction:(TCAlertAction *)cancelAction
+                       destructiveAction:(TCAlertAction *)destructiveAction
+                             otherAction:(TCAlertAction *)otherAction, ...
+{
+    NSMutableArray *arry = nil;
+    if (nil != otherAction) {
+        arry = [NSMutableArray array];
+        TCAlertAction *eachItem = otherAction;
+        va_list argumentList;
+        va_start(argumentList, otherAction);
+        do {
+            [arry addObject:eachItem];
+            eachItem = va_arg(argumentList, TCAlertAction *);
+        } while (nil != eachItem);
+        va_end(argumentList);
+    }
+    return [self initActionSheetWithTitle:title presentCtrler:viewCtrler cancelAction:cancelAction destructiveAction:destructiveAction otherActions:arry];
+}
+
 
 - (void)addAction:(TCAlertAction *)action
 {
