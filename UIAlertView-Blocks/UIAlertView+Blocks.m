@@ -56,7 +56,7 @@ static char const kRI_BUTTON_ASS_KEY;
         return NSNotFound;
     }
     NSInteger buttonIndex = [self addButtonWithTitle:action.title];
-    [[self buttonItems] addObject:action];
+    [self.buttonItems addObject:action];
     
     if (nil == self.delegate) {
         self.delegate = self;
@@ -68,9 +68,9 @@ static char const kRI_BUTTON_ASS_KEY;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     // If the button index is -1 it means we were dismissed with no selection
-    if (buttonIndex >= 0) {
-        TCAlertAction *item = [self.buttonItems objectAtIndex:buttonIndex];
-        if(item.handler) {
+    if (buttonIndex >= 0 && buttonIndex < self.buttonItems.count) {
+        TCAlertAction *item = self.buttonItems[buttonIndex];
+        if (nil != item.handler) {
             item.handler(item);
             item.handler = nil;
         }

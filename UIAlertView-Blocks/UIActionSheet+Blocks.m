@@ -87,16 +87,17 @@ static char const kRI_DISMISSAL_ACTION_KEY;
 {
     // Action sheets pass back -1 when they're cleared for some reason other than a button being 
     // pressed.
-    if (buttonIndex >= 0) {
-        NSArray *buttonsArray = objc_getAssociatedObject(self, &kRI_BUTTON_ASS_KEY);
-        TCAlertAction *item = [buttonsArray objectAtIndex:buttonIndex];
-        if (item.handler) {
+    NSArray *buttonsArray = objc_getAssociatedObject(self, &kRI_BUTTON_ASS_KEY);
+    if (buttonIndex >= 0 && buttonIndex < buttonsArray.count) {
+        
+        TCAlertAction *item = buttonsArray[buttonIndex];
+        if (nil != item.handler) {
             item.handler(item);
             item.handler = nil;
         }
     }
     
-    if (self.dismissalAction) {
+    if (nil != self.dismissalAction) {
         self.dismissalAction();
         self.dismissalAction = nil;
     }
