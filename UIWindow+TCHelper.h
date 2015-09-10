@@ -10,6 +10,8 @@
 
 @interface UIWindow (TCHelper)
 
++ (UIViewController *)keyWindowTopController;
+
 - (UIViewController *)topMostViewController;
 
 #ifdef __IPHONE_7_0

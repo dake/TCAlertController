@@ -10,6 +10,12 @@
 
 @implementation UIWindow (TCHelper)
 
++ (UIViewController *)keyWindowTopController
+{
+    return [[UIApplication sharedApplication].keyWindow topMostViewController];
+}
+
+
 // code from: http://stackoverflow.com/questions/11637709/get-the-current-displaying-uiviewcontroller-on-the-screen-in-appdelegate-m
 - (UIViewController *)topMostViewController
 {

@@ -91,7 +91,8 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
             }
 
             _alertView = alertCtrler;
-            _parentCtrler = viewCtrler ?: self.topController;
+            _parentCtrler = viewCtrler ?: UIWindow.keyWindowTopController;
+;
         }
 #endif
     }
@@ -132,7 +133,7 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
     if (self) {
         
         _preferredStyle = kTCAlertControllerStyleActionSheet;
-        _parentCtrler = viewCtrler ?: self.topController;
+        _parentCtrler = viewCtrler ?: UIWindow.keyWindowTopController;
         
 #ifndef __IPHONE_8_0
             _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherActions];
@@ -233,9 +234,5 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
     _alertView = nil;
 }
 
-- (UIViewController *)topController
-{
-    return [[UIApplication sharedApplication].keyWindow topMostViewController];
-}
 
 @end
