@@ -3,13 +3,13 @@
 //  TCKit
 //
 //  Created by dake on 15/3/12.
-//  Copyright (c) 2015年 Dake. All rights reserved.
+//  Copyright (c) 2015年 dake. All rights reserved.
 //
 
 #import "TCAlertController.h"
 
-#import "UIAlertView+Blocks.h"
-#import "UIActionSheet+Blocks.h"
+#import "UIAlertView+TCBlocks.h"
+#import "UIActionSheet+TCBlocks.h"
 
 #import "UIWindow+TCHelper.h"
 
@@ -77,9 +77,7 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 #else
         if (Nil == [UIAlertController class]) {
             _alertView = [[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherActions];
-        }
-        else {
-            
+        } else {
             UIAlertController *alertCtrler = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
             
             if (nil != cancelAction) {
@@ -92,7 +90,6 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 
             _alertView = alertCtrler;
             _parentCtrler = viewCtrler ?: UIWindow.keyWindowTopController;
-;
         }
 #endif
     }
@@ -140,9 +137,7 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 #else
         if (Nil == [UIAlertController class]) {
             _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherActions];
-        }
-        else {
-            
+        } else {
             UIAlertController *alertCtrler = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             
             if (nil != cancelAction) {
@@ -192,19 +187,16 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 {
     if (_preferredStyle == kTCAlertControllerStyleAlert || _preferredStyle == kTCAlertControllerStyleActionSheet) {
         
-        if ([_alertView isKindOfClass:[UIAlertView class]]) {
+        if ([_alertView isKindOfClass:UIAlertView.class]) {
             [((UIAlertView *)_alertView) addAction:action];
-        }
-        else if ([_alertView isKindOfClass:[UIActionSheet class]]) {
+        } else if ([_alertView isKindOfClass:UIActionSheet.class]) {
             [((UIActionSheet *)_alertView) addAction:action];
-        }
-        else {
+        } else {
 #ifdef __IPHONE_8_0
             [((UIAlertController *)_alertView) addAction:action.toUIAlertAction];
 #endif
         }
-    }
-    else {
+    } else {
         @throw [NSException exceptionWithName:NSStringFromClass(self.class) reason:@"unknown present style" userInfo:nil];
     }
 }
@@ -212,22 +204,18 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 - (void)show
 {
     if (_preferredStyle == kTCAlertControllerStyleAlert) {
-        if ([_alertView isKindOfClass:[UIAlertView class]]) {
+        if ([_alertView isKindOfClass:UIAlertView.class]) {
             [((UIAlertView *)_alertView) show];
-        }
-        else {
+        } else {
            [_parentCtrler presentViewController:_alertView animated:YES completion:nil];
         }
-    }
-    else if (_preferredStyle == kTCAlertControllerStyleActionSheet) {
-        if ([_alertView isKindOfClass:[UIActionSheet class]]) {
+    } else if (_preferredStyle == kTCAlertControllerStyleActionSheet) {
+        if ([_alertView isKindOfClass:UIActionSheet.class]) {
             [((UIActionSheet *)_alertView) showInView:_parentCtrler.view];
-        }
-        else {
+        } else {
             [_parentCtrler presentViewController:_alertView animated:YES completion:nil];
         }
-    }
-    else {
+    } else {
         @throw [NSException exceptionWithName:NSStringFromClass(self.class) reason:@"unknown present style" userInfo:nil];
     }
     
