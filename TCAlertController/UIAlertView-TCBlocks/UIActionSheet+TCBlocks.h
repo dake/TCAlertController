@@ -13,7 +13,7 @@
 - (instancetype)initWithTitle:(NSString *)title cancelAction:(TCAlertAction *)cancelAction destructiveAction:(TCAlertAction *)destructiveAction otherActions:(NSArray<TCAlertAction *> *)otherActions;
 - (instancetype)initWithTitle:(NSString *)title cancelAction:(TCAlertAction *)cancelAction destructiveAction:(TCAlertAction *)destructiveAction otherAction:(TCAlertAction *)otherAction, ... NS_REQUIRES_NIL_TERMINATION;
 
-- (NSInteger)addAction:(TCAlertAction *)action;
+- (void)addAction:(TCAlertAction *)action;
 
 /** This block is called when the action sheet is dismssed for any reason.
  */

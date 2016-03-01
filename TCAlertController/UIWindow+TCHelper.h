@@ -1,9 +1,9 @@
 //
 //  UIWindow+TCHelper.h
-//  SudiyiClient
+//  TCKit
 //
 //  Created by dake on 15-7-29.
-//  Copyright (c) 2015年 Dake. All rights reserved.
+//  Copyright (c) 2015年 dake. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

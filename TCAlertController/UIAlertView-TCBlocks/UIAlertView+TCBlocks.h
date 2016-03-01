@@ -14,6 +14,6 @@
 - (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherActions:(NSArray<TCAlertAction *> *)otherActions;
 - (instancetype)initWithTitle:(NSString *)title message:(NSString *)message cancelAction:(TCAlertAction *)cancelAction otherAction:(TCAlertAction *)otherAction, ... NS_REQUIRES_NIL_TERMINATION;
 
-- (NSInteger)addAction:(TCAlertAction *)action;
+- (void)addAction:(TCAlertAction *)action;
 
 @end

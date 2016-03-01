@@ -9,7 +9,21 @@
 #import <Foundation/Foundation.h>
 #import "TCAlertAction.h"
 
+
+typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
+    kTCAlertControllerStyleActionSheet = UIAlertControllerStyleActionSheet,
+    kTCAlertControllerStyleAlert = UIAlertControllerStyleAlert,
+#else
+    kTCAlertControllerStyleActionSheet = 0,
+    kTCAlertControllerStyleAlert,
+#endif
+};
+
+
 @interface TCAlertController : NSObject
+
+@property (nonatomic, assign) TCAlertControllerStyle preferredStyle;
 
 - (instancetype)initAlertViewWithTitle:(NSString *)title
                                message:(NSString *)message

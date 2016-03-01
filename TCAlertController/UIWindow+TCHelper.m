@@ -1,9 +1,9 @@
 //
 //  UIWindow+TCHelper.m
-//  SudiyiClient
+//  TCKit
 //
 //  Created by dake on 15-7-29.
-//  Copyright (c) 2015年 Dake. All rights reserved.
+//  Copyright (c) 2015年 dake. All rights reserved.
 //
 
 #import "UIWindow+TCHelper.h"
@@ -59,20 +59,18 @@
 
 - (UIViewController *)viewControllerForStatusBarStyle
 {
-    UIViewController *currentViewController = [self topMostViewController];
-    
-    while ([currentViewController childViewControllerForStatusBarStyle]) {
-        currentViewController = [currentViewController childViewControllerForStatusBarStyle];
+    UIViewController *currentViewController = self.topMostViewController;
+    while (nil != currentViewController.childViewControllerForStatusBarStyle) {
+        currentViewController = currentViewController.childViewControllerForStatusBarStyle;
     }
     return currentViewController;
 }
 
 - (UIViewController *)viewControllerForStatusBarHidden
 {
-    UIViewController *currentViewController = [self topMostViewController];
-    
-    while ([currentViewController childViewControllerForStatusBarHidden]) {
-        currentViewController = [currentViewController childViewControllerForStatusBarHidden];
+    UIViewController *currentViewController = self.topMostViewController;
+    while (nil != currentViewController.childViewControllerForStatusBarHidden) {
+        currentViewController = currentViewController.childViewControllerForStatusBarHidden;
     }
     return currentViewController;
 }

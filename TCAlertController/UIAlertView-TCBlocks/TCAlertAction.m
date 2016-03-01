@@ -11,7 +11,7 @@
 
 @interface TCAlertAction ()
 
-@property (nonatomic, assign, readwrite) NSString *title;
+@property (nonatomic, copy, readwrite) NSString *title;
 @property (nonatomic, assign, readwrite) TCAlertActionStyle style;
 
 @end

@@ -76,10 +76,10 @@ static char const kRI_BUTTON_ASS_KEY;
     return [self initWithTitle:title message:message cancelAction:cancelAction otherActions:arry];
 }
 
-- (NSInteger)addAction:(TCAlertAction *)action
+- (void)addAction:(TCAlertAction *)action
 {
     if (nil == action) {
-        return NSNotFound;
+        return;
     }
     
     if (nil == self.delegate) {
@@ -87,7 +87,7 @@ static char const kRI_BUTTON_ASS_KEY;
     }
     
     [self.buttonItems addObject:action];
-    return [self addButtonWithTitle:action.title];
+    [self addButtonWithTitle:action.title];
 }
 
 @end

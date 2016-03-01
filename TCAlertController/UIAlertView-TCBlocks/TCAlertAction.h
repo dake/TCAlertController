@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, TCAlertActionStyle) {
-#ifdef __IPHONE_8_0
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_8_0
     kTCAlertActionStyleDefault = UIAlertActionStyleDefault,
     kTCAlertActionStyleCancel = UIAlertActionStyleCancel,
     kTCAlertActionStyleDestructive = UIAlertActionStyleDestructive,
@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, TCAlertActionStyle) {
 + (instancetype)cancelActionWithTitle:(NSString *)title handler:(void (^)(TCAlertAction *action))handler;
 + (instancetype)destructiveActionWithTitle:(NSString *)title handler:(void (^)(TCAlertAction *action))handler;
 
-@property (nonatomic, assign, readonly) NSString *title;
+@property (nonatomic, copy, readonly) NSString *title;
 @property (nonatomic, assign, readonly) TCAlertActionStyle style;
 @property (nonatomic, copy) void (^handler)(TCAlertAction *action);
 

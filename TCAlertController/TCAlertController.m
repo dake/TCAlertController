@@ -10,22 +10,9 @@
 
 #import "UIAlertView+TCBlocks.h"
 #import "UIActionSheet+TCBlocks.h"
-
 #import "UIWindow+TCHelper.h"
 
 
-typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
-#ifdef __IPHONE_8_0
-    kTCAlertControllerStyleActionSheet = UIAlertControllerStyleActionSheet,
-    kTCAlertControllerStyleAlert = UIAlertControllerStyleAlert,
-#else
-    kTCAlertControllerStyleActionSheet = 0,
-    kTCAlertControllerStyleAlert,
-#endif
-};
-
-
-#ifdef __IPHONE_8_0
 @interface TCAlertAction (UIKitHelper)
 
 - (UIAlertAction *)toUIAlertAction;
@@ -38,26 +25,32 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 {
     void (^handler)(UIAlertAction *action) = nil;
     if (nil != self.handler) {
+        __weak typeof(self) wSelf = self;
         handler = ^(UIAlertAction *action) {
-            self.handler(self);
-            self.handler = nil;
+            wSelf.handler(wSelf);
+            wSelf.handler = nil;
         };
     }
-    UIAlertAction *action = [UIAlertAction actionWithTitle:self.title style:(UIAlertActionStyle)self.style handler:handler];
-    return action;
+
+    return [UIAlertAction actionWithTitle:self.title style:(UIAlertActionStyle)self.style handler:handler];
 }
 
 @end
 
-#endif
+
+@protocol UIAlertViewAction <NSObject>
+
+@required
+- (void)addAction:(id)action;
+
+@end
 
 
 @implementation TCAlertController
 {
     @private
-    id _alertView;
+    id<UIAlertViewAction> _alertView;
     __weak UIViewController *_parentCtrler;
-    TCAlertControllerStyle _preferredStyle;
 }
 
 
@@ -72,11 +65,10 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
     if (self) {
         _preferredStyle = kTCAlertControllerStyleAlert;
         
-#ifndef __IPHONE_8_0
-            _alertView = [[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherActions];
-#else
-        if (Nil == [UIAlertController class]) {
-            _alertView = [[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherActions];
+        if (Nil == UIAlertController.class) {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0
+            _alertView = (id<UIAlertViewAction>)[[UIAlertView alloc] initWithTitle:title message:message cancelAction:cancelAction otherActions:otherActions];
+#endif
         } else {
             UIAlertController *alertCtrler = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
             
@@ -87,11 +79,10 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
             for (TCAlertAction *eachItem in otherActions) {
                 [alertCtrler addAction:eachItem.toUIAlertAction];
             }
-
-            _alertView = alertCtrler;
+            
+            _alertView = (id<UIAlertViewAction>)alertCtrler;
             _parentCtrler = viewCtrler ?: UIWindow.keyWindowTopController;
         }
-#endif
     }
     
     return self;
@@ -128,15 +119,13 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 {
     self = [super init];
     if (self) {
-        
         _preferredStyle = kTCAlertControllerStyleActionSheet;
         _parentCtrler = viewCtrler ?: UIWindow.keyWindowTopController;
         
-#ifndef __IPHONE_8_0
-            _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherActions];
-#else
-        if (Nil == [UIAlertController class]) {
-            _alertView = [[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherActions];
+        if (Nil == UIAlertController.class) {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0
+            _alertView = (id<UIAlertViewAction>)[[UIActionSheet alloc] initWithTitle:title cancelAction:cancelAction destructiveAction:destructiveAction otherActions:otherActions];
+#endif
         } else {
             UIAlertController *alertCtrler = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             
@@ -152,9 +141,8 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
                 [alertCtrler addAction:eachItem.toUIAlertAction];
             }
             
-            _alertView = alertCtrler;
+            _alertView = (id<UIAlertViewAction>)alertCtrler;
         }
-#endif
     }
     
     return self;
@@ -185,38 +173,21 @@ typedef NS_ENUM(NSInteger, TCAlertControllerStyle) {
 
 - (void)addAction:(TCAlertAction *)action
 {
-    if (_preferredStyle == kTCAlertControllerStyleAlert || _preferredStyle == kTCAlertControllerStyleActionSheet) {
-        
-        if ([_alertView isKindOfClass:UIAlertView.class]) {
-            [((UIAlertView *)_alertView) addAction:action];
-        } else if ([_alertView isKindOfClass:UIActionSheet.class]) {
-            [((UIActionSheet *)_alertView) addAction:action];
-        } else {
-#ifdef __IPHONE_8_0
-            [((UIAlertController *)_alertView) addAction:action.toUIAlertAction];
-#endif
-        }
+    if ([_alertView isKindOfClass:UIAlertController.class]) {
+        [_alertView addAction:action.toUIAlertAction];
     } else {
-        @throw [NSException exceptionWithName:NSStringFromClass(self.class) reason:@"unknown present style" userInfo:nil];
+        [_alertView addAction:action];
     }
 }
 
 - (void)show
 {
-    if (_preferredStyle == kTCAlertControllerStyleAlert) {
-        if ([_alertView isKindOfClass:UIAlertView.class]) {
-            [((UIAlertView *)_alertView) show];
-        } else {
-           [_parentCtrler presentViewController:_alertView animated:YES completion:nil];
-        }
-    } else if (_preferredStyle == kTCAlertControllerStyleActionSheet) {
-        if ([_alertView isKindOfClass:UIActionSheet.class]) {
-            [((UIActionSheet *)_alertView) showInView:_parentCtrler.view];
-        } else {
-            [_parentCtrler presentViewController:_alertView animated:YES completion:nil];
-        }
-    } else {
-        @throw [NSException exceptionWithName:NSStringFromClass(self.class) reason:@"unknown present style" userInfo:nil];
+    if ([_alertView isKindOfClass:UIViewController.class]) {
+        [_parentCtrler presentViewController:(UIViewController *)_alertView animated:YES completion:nil];
+    } else if ([_alertView isKindOfClass:UIAlertView.class]) {
+        [((UIAlertView *)_alertView) show];
+    } else if ([_alertView isKindOfClass:UIActionSheet.class]) {
+        [((UIActionSheet *)_alertView) showInView:_parentCtrler.view];
     }
     
     _alertView = nil;
