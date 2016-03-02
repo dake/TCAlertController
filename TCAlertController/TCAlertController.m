@@ -25,10 +25,10 @@
 {
     void (^handler)(UIAlertAction *action) = nil;
     if (nil != self.handler) {
-        __weak typeof(self) wSelf = self;
+        // !!!: no weak self in purpose
         handler = ^(UIAlertAction *action) {
-            wSelf.handler(wSelf);
-            wSelf.handler = nil;
+            self.handler(self);
+            self.handler = nil;
         };
     }
 
