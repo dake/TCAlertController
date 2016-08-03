@@ -12,7 +12,7 @@
 
 + (UIViewController *)keyWindowTopController
 {
-    return [[UIApplication sharedApplication].keyWindow topMostViewController];
+    return [[UIApplication sharedApplication].delegate.window topMostViewController];
 }
 
 
@@ -51,6 +51,12 @@
         }
         
     } while (isPresenting);
+    
+    if ([controller isKindOfClass:UITabBarController.class]) {
+        controller = [self topViewController:((UITabBarController *)controller).selectedViewController];
+    } else if ([controller isKindOfClass:UINavigationController.class]) {
+        controller = [self topViewController:((UINavigationController *)controller).visibleViewController];
+    }
     
     return controller;
 }

@@ -7,6 +7,7 @@
 //
 
 #import "TCAlertViewDelegate.h"
+#import "TCAlertAction.h"
 
 @interface UIAlertView (TCBlocks)
 
