@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0
+
 @class TCAlertAction;
 @interface UIAlertView (TCBlocks)
 
@@ -17,3 +19,5 @@
 - (void)addAction:(TCAlertAction *)action;
 
 @end
+
+#endif

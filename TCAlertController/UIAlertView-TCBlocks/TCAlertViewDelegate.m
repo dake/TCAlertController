@@ -6,6 +6,8 @@
 //  Copyright © 2016年 dake. All rights reserved.
 //
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_8_0
+
 #import "TCAlertViewDelegate.h"
 #import "TCAlertAction.h"
 
@@ -71,3 +73,5 @@
 
 
 @end
+
+#endif
